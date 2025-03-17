@@ -19,6 +19,4 @@ func TestContext1(t *testing.T) {
 		fmt.Println(ctx.Err())
 	}
 
-	ctx1, cancel := context.WithCancel(parentCtx)
-	ctx1.Deadline()
 }
