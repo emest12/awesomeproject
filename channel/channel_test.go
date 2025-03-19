@@ -2,6 +2,7 @@ package channel
 
 import (
 	"fmt"
+	"github.com/jizhuozhi/go-future"
 	"golang.org/x/net/context"
 	"sync"
 	"testing"
@@ -111,4 +112,13 @@ func TestChannel4(t *testing.T) {
 		t.Log(c)
 		t.Log(open)
 	}
+}
+
+func TestChannel5(t *testing.T) {
+	f := future.Async(func() (string, error) {
+		panic("123")
+		return "foo", nil
+	})
+	val, err := f.Get()
+	println(val, err)
 }
