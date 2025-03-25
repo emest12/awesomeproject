@@ -30,12 +30,14 @@ func TestReflect1(test *testing.T) {
 	fmt.Println(str)
 }
 
+type Person struct {
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+
+// 结构体 反射 FieldByName 指针 Elem()
 func TestReflect2(test *testing.T) {
 	// 结构体变量
-	type Person struct {
-		Name string `json:"name"`
-		Age  int    `json:"age"`
-	}
 	person1 := &Person{
 		Name: "john",
 		Age:  20,
@@ -50,8 +52,8 @@ func TestReflect2(test *testing.T) {
 	fmt.Printf("person1 type: %v\n", v.Elem().Type()) // reflect.Person
 	fmt.Printf("person1 kind: %v\n", t.Elem().Kind()) // struct
 
-	test.Log(v.CanSet())
-	test.Log(v.Elem().CanSet())
+	test.Log(v.CanSet())        // false
+	test.Log(v.Elem().CanSet()) // true
 
 	// value和type都有FieldByName方法
 	nameField, ok := t.Elem().FieldByName("Name")
@@ -66,4 +68,41 @@ func TestReflect2(test *testing.T) {
 		v.Elem().FieldByName("Name").SetString("jack")
 	}
 	test.Log(person1)
+}
+
+// 反射 指针 elem()
+func TestReflect3(t *testing.T) {
+	i1 := 1
+	i2 := &i1
+	v := reflect.ValueOf(&i2)
+	v.Elem().Elem().SetInt(10)
+	t.Log(i1)
+}
+
+// reflect.New 创建该类型的新指针对象
+func TestReflect4(t *testing.T) {
+	gwh := Person{
+		Name: "gwh",
+		Age:  18,
+	}
+
+	v := reflect.New(reflect.TypeOf(gwh))
+	t.Log(v.Type()) // *reflect.Person
+	t.Log(v.Kind()) // ptr
+
+	newGwh := v.Elem().Interface().(Person)
+	t.Log(newGwh)
+}
+
+// 使用反射调用方法
+func Add(a, b int) int {
+	return a + b
+}
+
+var add = func(a, b int) int {
+	return a + b
+}
+
+func TestReflect5(test *testing.T) {
+	reflect.ValueOf(Add)
 }
