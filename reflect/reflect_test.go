@@ -103,6 +103,14 @@ var add = func(a, b int) int {
 	return a + b
 }
 
-func TestReflect5(test *testing.T) {
-	reflect.ValueOf(Add)
+func TestReflect5(t *testing.T) {
+	v := reflect.ValueOf(Add)
+	t.Log(v.Type()) // func(int, int) int
+	t.Log(v.Kind()) // func
+	if v.Kind() != reflect.Func {
+		t.Log("not func, can not call")
+	}
+	argv := []reflect.Value{reflect.ValueOf(10), reflect.ValueOf(20)}
+	result := v.Call(argv) // 前提是v.kind() == reflect.Func
+	t.Log("result:", result[0].Interface().(int))
 }
